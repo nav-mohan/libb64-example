@@ -6,7 +6,6 @@ For details, see http://sourceforge.net/projects/libb64
 */
 
 #include <b64/encode.h>
-#include <b64/decode.h>
 
 #include <iostream>
 #include <fstream>
@@ -63,20 +62,14 @@ int main(int argc, char** argv)
 
 	// determine whether we need to encode or decode:
 	std::string choice = argv[1];
-	if (choice == "-d")
-	{
-		base64::decoder D;
-		D.decode(instream, outstream);
-	}
-	else if (choice == "-e")
+	if (choice == "-e")
 	{
 		base64::encoder E;
 		E.encode(instream, outstream);
 	}
 	else
 	{
-		std::cout<<"["<<choice<<"]"<<std::endl;
-		usage("Please specify -d or -e as first argument!");
+		usage("Invalid option " + choice);
 	}
 
 	return 0;
