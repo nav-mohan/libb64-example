@@ -65,6 +65,9 @@ int main(int argc, char** argv)
 	std::replace(encodeFormatFileName.begin(),encodeFormatFileName.end(), '.','_');
 	std::replace(encodeFormatFileName.begin(),encodeFormatFileName.end(), '-','_');
 
+	std::string header = "extern unsigned char " + encodeFormatFileName + "[] = \n\"";
+	outstream.write(header.data(),header.length());
+	
 	// determine whether we need to encode or decode:
 	std::string choice = argv[1];
 	if (choice == "-e")
