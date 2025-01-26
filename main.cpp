@@ -69,6 +69,7 @@ int main(int argc, char** argv)
 	outstream.write(header.data(),header.length());
 	
 	// determine whether we need to encode or decode:
+	std::streampos startPos = outstream.tellp();
 	std::string choice = argv[1];
 	if (choice == "-e")
 	{
@@ -79,6 +80,12 @@ int main(int argc, char** argv)
 	{
 		usage("Invalid option " + choice);
 	}
+	std::streampos endPos = outstream.tellp();
+	size_t len = endPos - startPos;
+	std::string footer = "\";\nextern unsigned int " + encodeFormatFileName
+                       + "_len = " + int_to_string(len) + ";\n";
+
+	outstream.write(footer.data(),footer.length());
 
 	return 0;
 }
