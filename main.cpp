@@ -13,6 +13,7 @@ For details, see http://sourceforge.net/projects/libb64
 #include <string>
 
 #include <stdlib.h>
+#include <sstream>
 
 // Function which prints the usage of this executable
 void usage(std::string name)
@@ -26,10 +27,12 @@ void usage(std::string name)
   // note: this interface is likely to change in future kim-api releases
 }
 
+// quick replacement of to_string for C++98
+inline std::string int_to_string(int value)
 {
-	usage();
-	std::cerr<<"Incorrect invocation of base64:\n";
-	std::cerr<<message<<std::endl;
+  std::ostringstream oss;
+  oss << value;
+  return oss.str();
 }
 
 int main(int argc, char** argv)
