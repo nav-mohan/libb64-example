@@ -46,12 +46,8 @@ int main(int argc, char** argv)
 		exit(-1);
 	}
 	
-	// So far so good; try to open the input file
+	// open the input file in binary-mode
 	std::string input = argv[2];
-	// Note that we have to open the input in binary mode.
-	// This is due to some operating systems not using binary mode by default.
-	// Since we will most likely be dealing with binary files when encoding, we
-	// have to be able to deal with zeros (and other invalid chars) in the input stream.
 	std::ifstream instream(input.c_str(), std::ios_base::in | std::ios_base::binary);
 	if (!instream.is_open())
 	{
@@ -59,11 +55,8 @@ int main(int argc, char** argv)
 		exit(-1);
 	}
 	
-	// Now try to open the output file
+	// open the output file in binary-mode
 	std::string output = argv[3];
-	// Again, note that we have to open the ouput in binary mode.
-	// Similiarly, we will most likely need to deal with zeros in the output stream when we
-	// are decoding, and the output stream has to be able to use these invalid text chars.
 	std::ofstream outstream(output.c_str(), std::ios_base::out | std::ios_base::binary);
 	if (!outstream.is_open())
 	{
