@@ -12,6 +12,7 @@ For details, see http://sourceforge.net/projects/libb64
 #include <string>
 
 #include <stdlib.h>
+#include <algorithm>
 #include <sstream>
 
 // Function which prints the usage of this executable
@@ -59,6 +60,10 @@ int main(int argc, char** argv)
 		usage("Could not open output file!");
 		exit(-1);
 	}
+	
+	std::string encodeFormatFileName = input;
+	std::replace(encodeFormatFileName.begin(),encodeFormatFileName.end(), '.','_');
+	std::replace(encodeFormatFileName.begin(),encodeFormatFileName.end(), '-','_');
 
 	// determine whether we need to encode or decode:
 	std::string choice = argv[1];
