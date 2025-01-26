@@ -23,8 +23,14 @@ void usage(std::string name)
   // Follows docopt.org format
   std::cerr << "Usage:\n"
             << "  " << name << " -i <file-in> <file-out>\n"
-            << "  " << name << "--version\n";
+            << "  " << name << " --version\n";
   // note: this interface is likely to change in future kim-api releases
+}
+
+void usage(std::string name, std::string message)
+{
+	std::cerr << message << std::endl;
+	usage(name);
 }
 
 // quick replacement of to_string for C++98
@@ -42,13 +48,25 @@ int main(int argc, char** argv)
 		usage(argv[0]);
 		return 1;
 	}
+
+	std::string option = argv[1];
+	if(option == "--version")
+	{
+		printf("VERSION\n");
+		return 0;
+	}
+	else if(option != "-i" || argc != 4)
+	{
+		usage(argv[0]);
+		exit(-1);
+	}
 	
 	// open the input file in binary-mode
 	std::string input = argv[2];
 	std::ifstream instream(input.c_str(), std::ios_base::in | std::ios_base::binary);
 	if (!instream.is_open())
 	{
-		usage("Could not open input file!");
+		usage(argv[0], "Could not open input file " + input);
 		exit(-1);
 	}
 	
@@ -57,7 +75,7 @@ int main(int argc, char** argv)
 	std::ofstream outstream(output.c_str(), std::ios_base::out | std::ios_base::binary);
 	if (!outstream.is_open())
 	{
-		usage("Could not open output file!");
+		usage(argv[0], "Could not open output file " + output);
 		exit(-1);
 	}
 	
@@ -68,18 +86,9 @@ int main(int argc, char** argv)
 	std::string header = "extern unsigned char " + encodeFormatFileName + "[] = \n\"";
 	outstream.write(header.data(),header.length());
 	
-	// determine whether we need to encode or decode:
 	std::streampos startPos = outstream.tellp();
-	std::string choice = argv[1];
-	if (choice == "-e")
-	{
-		base64::encoder E;
-		E.encode(instream, outstream);
-	}
-	else
-	{
-		usage("Invalid option " + choice);
-	}
+	base64::encoder E;
+	E.encode(instream, outstream);
 	outstream.seekp(-1, std::ios::cur); // rewind by 1 character to delete the '\n' written by libb64
 	std::streampos endPos = outstream.tellp();
 	size_t len = endPos - startPos;
