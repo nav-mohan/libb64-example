@@ -15,17 +15,17 @@ For details, see http://sourceforge.net/projects/libb64
 #include <stdlib.h>
 
 // Function which prints the usage of this executable
-void usage()
+void usage(std::string name)
 {
-	std::cerr<< \
-		"base64: Encodes and Decodes files using base64\n" \
-		"Usage: base64 [-e|-d] [input] [output]\n" \
-		"   Where [-e] will encode the input file into the output file,\n" \
-		"         [-d] will decode the input file into the output file, and\n" \
-		"         [input] and [output] are the input and output files, respectively.\n";
+  size_t beg = name.find_last_of("/\\");
+  if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
+  // Follows docopt.org format
+  std::cerr << "Usage:\n"
+            << "  " << name << " -i <file-in> <file-out>\n"
+            << "  " << name << "--version\n";
+  // note: this interface is likely to change in future kim-api releases
 }
-// Function which prints the usage of this executable, plus a short message
-void usage(const std::string& message)
+
 {
 	usage();
 	std::cerr<<"Incorrect invocation of base64:\n";
@@ -34,16 +34,10 @@ void usage(const std::string& message)
 
 int main(int argc, char** argv)
 {
-	// Quick check for valid arguments
-	if (argc == 1)
+	if ((argc < 2) || (argc > 4))
 	{
-		usage();
-		exit(-1);
-	}
-	if (argc != 4)
-	{
-		usage("Wrong number of arguments!");
-		exit(-1);
+		usage(argv[0]);
+		return 1;
 	}
 	
 	// open the input file in binary-mode
