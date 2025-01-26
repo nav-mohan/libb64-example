@@ -80,6 +80,7 @@ int main(int argc, char** argv)
 	{
 		usage("Invalid option " + choice);
 	}
+	outstream.seekp(-1, std::ios::cur); // rewind by 1 character to delete the '\n' written by libb64
 	std::streampos endPos = outstream.tellp();
 	size_t len = endPos - startPos;
 	std::string footer = "\";\nextern unsigned int " + encodeFormatFileName
