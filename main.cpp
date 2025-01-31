@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 	
 	// open the output file in binary-mode
 	std::string output = argv[3];
-	std::ofstream outstream(output.c_str(), std::ios_base::out | std::ios_base::binary);
+	std::ofstream outstream(output.c_str(), std::ios_base::out);
 	if (!outstream.is_open())
 	{
 		usage(argv[0], "Could not open output file " + output);
@@ -88,12 +88,13 @@ int main(int argc, char** argv)
 	
 	std::streampos startPos = outstream.tellp();
 	base64::encoder E;
+
 	E.encode(instream, outstream);
 	outstream.seekp(-1, std::ios::cur); // rewind by 1 character to delete the '\n' written by libb64
 	std::streampos endPos = outstream.tellp();
-	size_t len = endPos - startPos;
+	// size_t len = endPos - startPos;
 	std::string footer = "\";\nextern unsigned int " + encodeFormatFileName
-                       + "_len = " + int_to_string(len) + ";\n";
+                       + "_len = sizeof(" + encodeFormatFileName + ");\n";
 
 	outstream.write(footer.data(),footer.length());
 
