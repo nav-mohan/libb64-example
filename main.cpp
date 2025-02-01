@@ -32,13 +32,22 @@ void usage(std::string name, std::string message)
 	std::cerr << message << std::endl;
 	usage(name);
 }
-
-// quick replacement of to_string for C++98
-inline std::string int_to_string(int value)
+namespace B64ENCODE 
 {
-  std::ostringstream oss;
-  oss << value;
-  return oss.str();
+void WriteEncodedFile(std::ifstream & instream, std::ofstream & outstream, const std::string & encodeFormatFileName)
+{
+	std::string header = "extern unsigned char " + encodeFormatFileName + "[] = \n\"";
+	outstream.write(header.data(),header.length());
+	
+	base64::encoder E;
+
+	E.encode(instream, outstream);
+	outstream.seekp(-1, std::ios::cur); // rewind by 1 character to delete the '\n' written by libb64
+	std::string footer = "\";\nextern unsigned int " + encodeFormatFileName
+                       + "_len = sizeof(" + encodeFormatFileName + ");\n";
+
+	outstream.write(footer.data(),footer.length());
+}
 }
 
 int main(int argc, char** argv)
@@ -83,21 +92,8 @@ int main(int argc, char** argv)
 	std::replace(encodeFormatFileName.begin(),encodeFormatFileName.end(), '.','_');
 	std::replace(encodeFormatFileName.begin(),encodeFormatFileName.end(), '-','_');
 
-	std::string header = "extern unsigned char " + encodeFormatFileName + "[] = \n\"";
-	outstream.write(header.data(),header.length());
+	B64ENCODE::WriteEncodedFile(instream,outstream,encodeFormatFileName);
 	
-	std::streampos startPos = outstream.tellp();
-	base64::encoder E;
-
-	E.encode(instream, outstream);
-	outstream.seekp(-1, std::ios::cur); // rewind by 1 character to delete the '\n' written by libb64
-	std::streampos endPos = outstream.tellp();
-	// size_t len = endPos - startPos;
-	std::string footer = "\";\nextern unsigned int " + encodeFormatFileName
-                       + "_len = sizeof(" + encodeFormatFileName + ");\n";
-
-	outstream.write(footer.data(),footer.length());
-
 	return 0;
 }
 
